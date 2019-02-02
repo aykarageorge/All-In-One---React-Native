@@ -1,5 +1,4 @@
 import React from "react";
-import { createStackNavigator } from 'react-navigation';
 import { Text, View, Image, StyleSheet } from "react-native";
 import PageTemplate from './components/PageBgComponent';
 
@@ -16,11 +15,6 @@ export default class SplashScreen extends React.Component {
 		);
 	}
 }
-
-// const AppStackNavigator = createStackNavigator({
-// 	Login: LoginScreen,
-// 	Home: SplashScreen
-// })
 
 const styles = StyleSheet.create({
 	logo: {

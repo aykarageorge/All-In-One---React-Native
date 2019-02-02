@@ -37,8 +37,8 @@ export default class LoginForm extends React.Component {
                         <Text style={styles.otherOptionsText}> Forgot Password?</Text>
                     </View>
 
-                    <TouchableOpacity style={styles.loginButtonContainer} >
-                        <Text style={styles.buttonText} onPress={() => this.props.navigation.navigate('Home')} >LOGIN</Text>
+                    <TouchableOpacity style={styles.loginButtonContainer}>
+                        <Text style={styles.buttonText} >LOGIN</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.line}>
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     fbButtonContainer: {
-        backgroundColor: 'rgb(31, 27, 109)',
+        backgroundColor: 'rgb(59,89,152)',
         paddingVertical: 15,
         borderRadius: 20,
         width: 300,

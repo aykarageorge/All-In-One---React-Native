@@ -1,55 +1,38 @@
-import PropTypes from 'prop-types';
-import React, { PureComponent, StyleSheet } from 'react';
-import { Button } from 'react-native-material-buttons';
+import React, { Component } from 'react'
+import { StyleSheet, View, Text, Picker } from 'react-native';
 
-export default class DropdownItem extends PureComponent {
-    static defaultProps = {
-        color: 'transparent',
-        disabledColor: 'transparent',
-        rippleContainerBorderRadius: 0,
-        shadeBorderRadius: 0,
-    };
-
-    static propTypes = {
-        ...Button.propTypes,
-
-        index: PropTypes.number.isRequired,
-    };
-
-    constructor(props) {
-        super(props);
-
-        this.onPress = this.onPress.bind(this);
+export default class DropDownBox extends Component {
+    state = { item: '' }
+    updateItem = (item) => {
+        this.setState({ item: item })
     }
-
-    onPress() {
-        let { onPress, index } = this.props;
-
-        if ('function' === typeof onPress) {
-            onPress(index);
-        }
-    }
-
     render() {
-        let { children, style, index, ...props } = this.props;
-
         return (
-            <Button
-                {...props}
-
-                style={[styles.container, style]}
-                onPress={this.onPress}
-            >
-                {children}
-            </Button>
-        );
+            <View style={styles.container}>
+                <View style={styles.dropdown} width={this.props.width}>
+                    <Picker
+                        selectedValue={this.state.item}
+                        onValueChange={this.updateItem} >
+                        {this.props.data.map((listItem, index) => { return (<Picker.Item label={listItem} value={index} key={index} />) })}
+                    </Picker>
+                </View>
+                {/* to print selected item from Picker, use below code */}
+                {/* <Text>{this.state.item}</Text> */}
+            </View>
+        )
     }
 }
 
+
 const styles = StyleSheet.create({
     container: {
-        paddingVertical: 8,
-        borderRadius: 0,
-        justifyContent: 'center',
+        flex: 1,
+    },
+    dropdown: {
+        height: 45,
+        borderColor: 'rgb(247, 190, 4)',
+        borderWidth: 4,
+        borderRadius: 20,
+        justifyContent: 'space-around',
     },
 })
