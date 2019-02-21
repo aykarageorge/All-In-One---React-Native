@@ -37,7 +37,10 @@ export default class LoginForm extends React.Component {
                         <Text style={styles.otherOptionsText}> Forgot Password?</Text>
                     </View>
 
-                    <TouchableOpacity style={styles.loginButtonContainer}>
+                    <TouchableOpacity
+                        style={styles.loginButtonContainer}
+                        onPress={() => this.props.navigation.navigate('HomeRoute')}
+                    >
                         <Text style={styles.buttonText} >LOGIN</Text>
                     </TouchableOpacity>
                 </View>

@@ -1,16 +1,64 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ActivityIndicator, NetInfo, Dimensions } from 'react-native';
 import DropDownBox from './components/DropDownComponent';
 import HorizontalList from './components/HorizontalList';
+import OfflineNotice from './components/OfflineNotice';
+
+
+const width = (Dimensions.get('window').width);
 
 export default class HomeScreen extends Component {
-    render() {
-        services = ['All Services', 'Beauty', 'Health', 'Car Service'];
-        locations = ['Manama', 'Riffa', 'Muharraq', 'Bani Jamra', 'Madinat Hamad', 'A\'ali', 'Al Jasra', 'Madinat Isa'];
+    static navigationOptions = {
+        title: 'Home',
+    }
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true,
+            dataSource: null,
+        }
+    }
+
+    componentDidMount() {
+        NetInfo.isConnected.fetch().then(isConnected => {
+            console.log("Is " + (isConnected ? 'online' : 'offline'))
+            if (isConnected) {
+                fetch('http://onestopapi.brokzo.com/api/Values/getAllMainCategory')
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        this.setState({
+                            isLoading: false,
+                            dataSource: responseJson,
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    }).done()
+            } else {
+                console.log("No Internet");
+            }
+        })
+    }
+
+
+    render() {
+
+        if (this.state.isLoading) {
+            return (
+                <View style={styles.loading}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            )
+        } else {
+            var services = this.state.dataSource
+        }
+
+        // services = [{ 'service': 'All Services' }, { 'service': 'Beauty' }, { 'service': 'Health' }, { 'service': 'Car Service' }];
+        locations = [{ 'place': 'Manama' }, { 'place': 'Riffa' }, { 'place': 'Muharraq' }, { 'place': 'Bani Jamra' }, { 'place': 'Madinat Hamad' }, { 'place': 'A\'ali' }, { 'place': 'Al Jasra' }, { 'place': 'Madinat Isa' }];
         pastBookingData = [
             {
-                id: 1,
+                id: "1",
                 serviceProvider: "Beauty Lines Saloon Spa",
                 serviceStatus: "Successful",
                 empName: "Arjun Reddy",
@@ -18,7 +66,7 @@ export default class HomeScreen extends Component {
                 price: "18 BHD",
             },
             {
-                id: 2,
+                id: "2",
                 serviceProvider: "Car Care",
                 serviceStatus: "Payment Pending",
                 empName: "DQ",
@@ -26,7 +74,7 @@ export default class HomeScreen extends Component {
                 price: "50 BHD",
             },
             {
-                id: 3,
+                id: "3",
                 serviceProvider: "Health Care",
                 serviceStatus: "Successful",
                 empName: "Dr. Chandra Gupta Maurya",
@@ -34,7 +82,7 @@ export default class HomeScreen extends Component {
                 price: "25 BHD",
             },
             {
-                id: 4,
+                id: "4",
                 serviceProvider: "Petinary Homes",
                 serviceStatus: "Booked",
                 empName: "Dr. Jim Carry",
@@ -42,7 +90,7 @@ export default class HomeScreen extends Component {
                 price: "18 BHD",
             },
             {
-                id: 5,
+                id: "5",
                 serviceProvider: "Car Care",
                 serviceStatus: "Successful",
                 empName: "Diasy De'Zousa",
@@ -50,7 +98,7 @@ export default class HomeScreen extends Component {
                 price: "22 BHD",
             },
             {
-                id: 6,
+                id: "6",
                 serviceProvider: "Bikerz Zone",
                 serviceStatus: "Cancelled",
                 empName: "Fahad Fazil",
@@ -59,15 +107,22 @@ export default class HomeScreen extends Component {
             },
         ];
 
+        function _convertToArray(arrayOfObjects, propertryName) {
+            return arrayOfObjects.map(function (obj) {
+                return obj[propertryName]
+            })
+        }
+
         return (
             <View style={styles.container}>
+                <OfflineNotice />
                 <View style={styles.box0}>
                     <Text style={styles.heading}>BOOK SERVICES IN BAHRAIN </Text>
                 </View>
                 <View style={styles.box1}>
                     <View style={{ flex: 1.5 }}>
                         <View style={styles.locationBox}>
-                            <DropDownBox width={300} data={services} />
+                            <DropDownBox width={width - 50} data={_convertToArray(services, 'maincategory_name')} />
                             <TouchableOpacity>
                                 <View style={styles.gps}>
                                     <Image resizeMode="contain" style={{
@@ -79,7 +134,7 @@ export default class HomeScreen extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <DropDownBox width={350} data={locations} />
+                        <DropDownBox width={width} data={_convertToArray(locations, 'place')} />
                     </View>
                     <View style={{
                         padding: 10,
@@ -104,7 +159,7 @@ export default class HomeScreen extends Component {
                     </View>
 
                     <View style={styles.box3card} >
-                        <HorizontalList></HorizontalList>
+                        <HorizontalList data={pastBookingData}></HorizontalList>
                     </View>
 
                 </View >
@@ -131,7 +186,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: undefined,
         height: undefined,
-        // borderColor: 'red',
+        justifyContent: 'space-between',
         // borderWidth: 3,
     },
     box3: {
@@ -140,9 +195,6 @@ const styles = StyleSheet.create({
         width: undefined,
         height: undefined,
         marginTop: 10,
-        // justifyContent: 'space-around',
-        // borderColor: 'red',
-        // borderWidth: 3,
     },
     box3head: {
         flexDirection: 'row',
@@ -163,7 +215,7 @@ const styles = StyleSheet.create({
     locationBox: {
         flexDirection: 'row',
         marginBottom: 5,
-        alignItems: 'center',
+        alignSelf: 'center',
     },
     gps: {
         backgroundColor: 'rgb(247, 190, 4)',
@@ -181,7 +233,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(247, 190, 4)',
         paddingVertical: 15,
         borderRadius: 20,
-        width: 300,
+        width: width - 20,
         alignSelf: 'center',
     },
     buttonText: {
@@ -189,4 +241,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: '700',
     },
+    loading: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+        flex: 1,
+        justifyContent: 'center'
+    }
 })
